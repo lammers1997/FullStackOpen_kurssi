@@ -1,6 +1,6 @@
 
 body{
-    background-color: #F1E4C3;
+    background-color: #F1E4C3
 }
 h2{
     color: #597E52
@@ -8,4 +8,7 @@ h2{
 
 h3{
     color: #597E52
+}
+.tooMany{
+    color: red
 }
