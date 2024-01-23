@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NWE4MTljN2MzMGFlNzNlNDcyOWU1ZjEiLCJpYXQiOjE3MDU1MTgxNzgsImV4cCI6MTcwNTUyMTc3OH0.xveYhRQO3tj-q0qGGmLL6ZkeigsijDOuc_MlDFl88I0
 
 {
-    "title": "Toka plogi",
+    "title": "Nelejäs plasdogi",
     "author": "Matti",
-    "url": "tokapolgi.com/polg",
+    "url": "tokapolasdgi.com/polg",
     "likes": 69
 }
