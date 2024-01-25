@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import LoginForm from './components/Login'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -13,6 +14,7 @@ const App = () => {
     author: '',
     url: '',
   })
+  const [notification, setNotification] = useState({ message: null })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -35,6 +37,14 @@ const App = () => {
     }
   }, [])
 
+  const handleNotification = (message, type = 'notification') => {
+    setNotification({
+      message, type
+    })
+    setTimeout(() => {
+      setNotification({ message: null })
+    }, 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -49,9 +59,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      //Filter logged in user's blogs. Might not work, when user is saved in browser. :/
     } catch (exception) {
-      console.log('wrong credentials')
+      handleNotification('Invalid username or password!', 'error')
     }
   }
 
@@ -61,39 +70,34 @@ const App = () => {
     blogService.setToken(null)
   }
 
-  const handleCreateBlog = async (event) => {
+  const handleCreateBlog = (event) => {
     event.preventDefault()
-    // try {
-    //   const blogObject = newBlog
-    //   blogService.create(blogObject)
-    //     .then(returnedBlog => {
-    //       setBlogs(blogs.concat(returnedBlog))
-    //       setNewBlog({
-    //         title: '',
-    //         author: '',
-    //         url: '',
-    //       })
-    //     })
-    // } catch (error) {
-    //   console.log(error)
-    // }
-    const createdBlog = await blogService.create(newBlog)
-    setBlogs(blogs.concat(createdBlog))
-    setNewBlog({
-      title: '',
-      author: '',
-      url: '',
-    })
+    blogService
+      .create(newBlog)
+      .then(createdBlog => {
+        setBlogs(blogs.concat(createdBlog))
+        setNewBlog({
+          title: '',
+          author: '',
+          url: '',
+        })
+        handleNotification(`a new blog "${createdBlog.title}" by ${createdBlog.author} created!`)
+      })
+      .catch(error => {
+        console.log(error)
+        handleNotification(error.response.data.error, 'error')
+      })
 
-    //Manual re fetch to immediately show new blog in web page:
-    const updatedBlogs = await blogService.getAll();
-    setBlogs(updatedBlogs);
-
+    blogService.getAll().then(blogs => {
+      setBlogs(blogs)
+    }
+    )
   }
 
   if (user === null) {
     return (
       <div>
+        <Notification notification={notification} />
         <h2>Log in to application</h2>
         <LoginForm
           username={username}
@@ -108,6 +112,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
+      <Notification notification={notification} />
       <div>
         {user.name} logged in<button onClick={handleLogout}>logout</button>
 
