@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect} from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import BlogForm from './components/BlogForm'
@@ -9,16 +10,12 @@ import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState({
-    title: '',
-    author: '',
-    url: '',
-  })
   const [notification, setNotification] = useState({ message: null })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
@@ -70,17 +67,12 @@ const App = () => {
     blogService.setToken(null)
   }
 
-  const handleCreateBlog = (event) => {
-    event.preventDefault()
+  const addBlog = (blogObject) => {
     blogService
-      .create(newBlog)
+      .create(blogObject)
       .then(createdBlog => {
         setBlogs(blogs.concat(createdBlog))
-        setNewBlog({
-          title: '',
-          author: '',
-          url: '',
-        })
+
         handleNotification(`a new blog "${createdBlog.title}" by ${createdBlog.author} created!`)
       })
       .catch(error => {
@@ -94,41 +86,57 @@ const App = () => {
     )
   }
 
-  if (user === null) {
+
+  const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
     return (
       <div>
-        <Notification notification={notification} />
-        <h2>Log in to application</h2>
-        <LoginForm
-          username={username}
-          password={password}
-          setUsername={setUsername}
-          setPassword={setPassword}
-          handleLogin={handleLogin} />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}> log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <Notification notification={notification} />
+          <h2>Log in to application</h2>
+          <LoginForm
+            username={username}
+            password={password}
+            setUsername={setUsername}
+            setPassword={setPassword}
+            handleLogin={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}> cancel </button>
+        </div>
       </div>
     )
   }
+  const blogForm = () => (
+    <Togglable buttonLabel = 'new blog'>
+      <BlogForm createBlog={addBlog}/>
+    </Togglable>
+  )
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification notification={notification} />
-      <div>
+
+      {!user && loginForm()}
+      {user && <div>
         {user.name} logged in<button onClick={handleLogout}>logout</button>
 
+
+
+        <h2>create new blog</h2>
+        {blogForm()}
+        <br />
+        {blogs
+          .filter(blog => blog.user.username === user.username)
+          .map(blog =>
+            <Blog key={blog.id} blog={blog} />
+          )}
       </div>
-      <h2>create new</h2>
-      <BlogForm
-        newBlog={newBlog}
-        setNewBlog={setNewBlog}
-        handleCreateBlog={handleCreateBlog}
-      />
-      <br />
-      {blogs
-        .filter(blog => blog.user.username === user.username)
-        .map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
+      }
     </div>
   )
 }
