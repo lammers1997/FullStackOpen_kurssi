@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 
 const Blog = ({ blog, deleteBlog }) => {
   const [viewInfo, setViewInfo] = useState(false)
@@ -25,15 +24,6 @@ const Blog = ({ blog, deleteBlog }) => {
   const toggleViewInfo = () => {
     setViewInfo(!viewInfo)
   }
-
-  // const deleteBlog = (blogId) => {
-  //   console.log(blogId)
-  //   blogService
-  //     .deleteBlog(blogId)
-  //     .then(() => {
-  //       setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
-  //     })
-  // }
 
   return (
     <div style={blogStyle}>

@@ -10,20 +10,26 @@ import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
+  // const [blogsToShow, setBlogsToShow] = useState([])
+
   const [notification, setNotification] = useState({ message: null })
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-
   const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
-    blogService.getAll().then(blogs => {
-      setBlogs(blogs)
-      console.log("ReRENDERING")
-    }
-    )
+    blogService
+      .getAll()
+      .then(initialBlogs => {
+        setBlogs(initialBlogs)
+      })
   }, [])
+
+  // useEffect(() => {
+  //   console.log("second")
+  //   setBlogsToShow(blogs.filter(blog => blog.user.username === user.username))
+  // }, [blogs])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -67,36 +73,31 @@ const App = () => {
     blogService.setToken(null)
   }
 
-  const addBlog = (blogObject) => {
-    console.log("blogs at beginning", blogs)
-    blogService
-      .create(blogObject)
-      .then(createdBlog => {
-        setBlogs(blogs.concat(createdBlog))
+  const addBlog = async (blogObject) => {
 
-        handleNotification(`a new blog "${createdBlog.title}" by ${createdBlog.author} created!`)
-      })
-      .catch(error => {
-        console.log(error)
-        handleNotification(error.response.data.error, 'error')
-      })
-    console.log("blogs at end:", blogs)
-    // blogService.getAll().then(blogs => {
-    //   setBlogs(blogs)
-    // }
-    // )
+    try {
+      const newBlog = await blogService.create(blogObject)
+
+      setBlogs(blogs.concat(newBlog))
+
+      //This feels like unnecessary fetch from the backend
+      //But for some odd reason, it makes the code work
+      //Otherwise it wouldnt update the blogs, when new is added
+      const allBlogs = await blogService.getAll()
+      setBlogs(allBlogs)
+
+      handleNotification(`a new blog "${newBlog.title}" by ${newBlog.author} created!`)
+
+    } catch (error) {
+      handleNotification(error.response.data.error, 'error')
+    }
   }
 
-  const handleDeleteBlog = (blogId) => {
-    console.log(blogId)
-    blogService
-      .deleteBlog(blogId)
-      .then(() => {
-        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
-      })
+  const handleDeleteBlog = async (blogId) => {
+
+    const response = await blogService.deleteBlog(blogId)
+    setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId))
   }
-
-
   const loginForm = () => {
     const hideWhenVisible = { display: loginVisible ? 'none' : '' }
     const showWhenVisible = { display: loginVisible ? '' : 'none' }
@@ -126,6 +127,10 @@ const App = () => {
     </Togglable>
   )
 
+  const blogsToShow = (!user)
+    ? blogs
+    : blogs.filter(blog => blog.user.username === user.username)
+
   return (
     <div>
       <h2>blogs</h2>
@@ -133,21 +138,27 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-        {user.name} logged in<button onClick={handleLogout}>logout</button>
-
-
-
-        <h2>create new blog</h2>
+        <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
         {blogForm()}
-        <br />
-        {blogs
-          .filter(blog => blog.user.username === user.username)
-          .map(blog =>
-            <Blog key={blog.id} blog={blog} deleteBlog={handleDeleteBlog} />
-          )}
       </div>
       }
+
+      <br />
+      <ul>
+        {blogsToShow
+          .map(blog =>
+            <li key={blog.id}>
+              <Blog
+                blog={blog}
+                deleteBlog={handleDeleteBlog}
+              />
+            </li>
+          )}
+      </ul>
+
     </div>
+
+
   )
 }
 
