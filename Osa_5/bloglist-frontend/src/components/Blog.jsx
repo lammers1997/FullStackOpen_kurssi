@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog, deleteBlog, addLike }) => {
+const Blog = ({ blog, deleteBlog, addLike, user }) => {
   const [viewInfo, setViewInfo] = useState(false)
 
   const blogStyle = {
@@ -25,6 +25,9 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
     setViewInfo(!viewInfo)
   }
 
+  //if user exists && if blog.user exists
+  const showRemoveButton = user && blog.user && user.username === blog.user.username
+
   return (
     <div style={blogStyle}>
       <div>
@@ -32,16 +35,18 @@ const Blog = ({ blog, deleteBlog, addLike }) => {
         <button onClick={toggleViewInfo}>
           {viewInfo ? 'hide' : 'view'}
         </button>
-        <button onClick={() => deleteBlog(blog.id)}>delete</button>
       </div>
       {viewInfo &&
         <div style={viewInfoStyle}>
-          <p>URL: {blog.url}</p>
+          <p>{blog.url}</p>
           <p>
-            Likes: {blog.likes}
+            likes {blog.likes}
             <button onClick={() => addLike(blog)}>like</button>
           </p>
-          <p>User: {blog.user.name}</p>
+          <p>{blog.user.name}</p>
+          <button onClick={() => deleteBlog(blog)} style={{ display: showRemoveButton ? 'inline-block' : 'none' }}>
+          remove
+        </button>
         </div>
       }
     </div>

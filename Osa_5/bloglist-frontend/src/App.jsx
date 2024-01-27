@@ -10,7 +10,6 @@ import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  // const [blogsToShow, setBlogsToShow] = useState([])
 
   const [notification, setNotification] = useState({ message: null })
   const [username, setUsername] = useState('')
@@ -88,10 +87,15 @@ const App = () => {
     }
   }
 
-  const handleDeleteBlog = async (blogId) => {
-
-    const response = await blogService.deleteBlog(blogId)
-    setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId))
+  const handleDeleteBlog = async (blog) => {
+    const ok = window.confirm(`remove blog "${blog.title}" by ${blog.author}`)
+    if (ok) {
+      const response = await blogService.deleteBlog(blog.id)
+      setBlogs((prevBlogs) => prevBlogs.filter((b) => b.id !== blog.id))
+      handleNotification(` Blog "${blog.title}" by ${blog.author} deleted`)
+    } else {
+      console.log("delete cancelled")
+    }
   }
 
 
@@ -144,6 +148,8 @@ const App = () => {
     </Togglable>
   )
 
+  //First I thought that only the logged in users blogs should be showed
+  //Then I realised that is not necessary. But gonna leave this here, if ever needed:)
   const blogsToShow = (!user)
     ? blogs
     : blogs.filter(blog => blog.user.username === user.username)
@@ -154,27 +160,29 @@ const App = () => {
       <Notification notification={notification} />
 
       {!user && loginForm()}
-      {user && <div>
-        <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
-        {blogForm()}
-      </div>
+      {user &&
+        <div>
+          <p>{user.name} logged in<button onClick={handleLogout}>logout</button></p>
+          {blogForm()}
+
+
+          <br />
+          <ul>
+            {blogs
+              .sort((a, b) => b.likes - a.likes)
+              .map(blog =>
+                <li key={blog.id}>
+                  <Blog
+                    blog={blog}
+                    deleteBlog={handleDeleteBlog}
+                    user={user}
+                    addLike={addLike}
+                  />
+                </li>
+              )}
+          </ul>
+        </div>
       }
-
-      <br />
-      <ul>
-        {blogsToShow
-          .sort((a, b) => b.likes - a.likes)
-          .map(blog =>
-            <li key={blog.id}>
-              <Blog
-                blog={blog}
-                deleteBlog={handleDeleteBlog}
-                addLike={addLike}
-              />
-            </li>
-          )}
-      </ul>
-
     </div>
 
 
@@ -182,3 +190,7 @@ const App = () => {
 }
 
 export default App
+
+
+
+
