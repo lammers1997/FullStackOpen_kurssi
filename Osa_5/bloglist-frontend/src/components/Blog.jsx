@@ -45,8 +45,8 @@ const Blog = ({ blog, deleteBlog, addLike, user }) => {
           </p>
           <p>{blog.user.name}</p>
           <button onClick={() => deleteBlog(blog)} style={{ display: showRemoveButton ? 'inline-block' : 'none' }}>
-          remove
-        </button>
+            remove
+          </button>
         </div>
       }
     </div>

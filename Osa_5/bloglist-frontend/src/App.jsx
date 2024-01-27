@@ -94,7 +94,7 @@ const App = () => {
       setBlogs((prevBlogs) => prevBlogs.filter((b) => b.id !== blog.id))
       handleNotification(` Blog "${blog.title}" by ${blog.author} deleted`)
     } else {
-      console.log("delete cancelled")
+      console.log('delete cancelled')
     }
   }
 
