@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import LoginForm from './components/Login'
@@ -68,6 +68,7 @@ const App = () => {
   }
 
   const addBlog = (blogObject) => {
+    console.log("blogs at beginning", blogs)
     blogService
       .create(blogObject)
       .then(createdBlog => {
@@ -79,11 +80,20 @@ const App = () => {
         console.log(error)
         handleNotification(error.response.data.error, 'error')
       })
+    console.log("blogs at end:", blogs)
+    // blogService.getAll().then(blogs => {
+    //   setBlogs(blogs)
+    // }
+    // )
+  }
 
-    blogService.getAll().then(blogs => {
-      setBlogs(blogs)
-    }
-    )
+  const handleDeleteBlog = (blogId) => {
+    console.log(blogId)
+    blogService
+      .deleteBlog(blogId)
+      .then(() => {
+        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+      })
   }
 
 
@@ -111,8 +121,8 @@ const App = () => {
     )
   }
   const blogForm = () => (
-    <Togglable buttonLabel = 'new blog'>
-      <BlogForm createBlog={addBlog}/>
+    <Togglable buttonLabel='new blog'>
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
@@ -133,7 +143,7 @@ const App = () => {
         {blogs
           .filter(blog => blog.user.username === user.username)
           .map(blog =>
-            <Blog key={blog.id} blog={blog} />
+            <Blog key={blog.id} blog={blog} deleteBlog={handleDeleteBlog} />
           )}
       </div>
       }
