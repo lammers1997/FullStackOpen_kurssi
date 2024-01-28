@@ -19,7 +19,7 @@ const CreateNewBlog = ({ createBlog }) => {
     setNewUrl('')
   }
   return (
-    <div>
+    <div className='formDiv'>
       <h2>create new blog</h2>
 
       <form onSubmit={addBlog}>

@@ -3,6 +3,7 @@ import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
+import BlogForm from './BlogForm'
 
 describe('<Blog />', () => {
   let blog
@@ -83,6 +84,47 @@ describe('<Blog />', () => {
     await user.click(likeButton)
     expect(mockHandler.mock.calls).toHaveLength(2)
 
+
+  })
+})
+
+describe('<BlogForm />', () => {
+  test('updates parent state and calls onSubmit', async () => {
+    //create new session with userEvent
+    const user = userEvent.setup()
+    //mock-function upon creation
+    const createBlog = jest.fn()
+
+    const { container } = render(<BlogForm createBlog={createBlog} />)
+    //find textbox
+    //const input = screen.getByRole('textbox')
+    // const title = container.querySelector('.titleTextbox')
+    // const author = container.querySelector('.authorTextbox')
+    // const url = container.querySelector('.urlTextbox')
+    const inputs = screen.getAllByRole('textbox')
+
+
+    //find create button
+    const sendButton = screen.getByText('create')
+
+    //insert title, author and url
+    // await user.type(title, 'Test Title')
+    // await user.type(author, 'Test Author')
+    // await user.type(url, 'Test Url')
+    await user.type(inputs[0], 'Test data')
+    await user.type(inputs[1], 'Test data')
+    await user.type(inputs[2], 'Test data')
+
+
+
+    await user.click(sendButton)
+
+    //Make sure createBlog is called
+    expect(createBlog.mock.calls).toHaveLength(1)
+    //Expect correct data to exist
+    expect(createBlog.mock.calls[0][0].title).toBe('Test data')
+    expect(createBlog.mock.calls[0][0].author).toBe('Test data')
+    expect(createBlog.mock.calls[0][0].url).toBe('Test data')
 
   })
 })
