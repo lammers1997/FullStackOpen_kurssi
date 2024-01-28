@@ -4,73 +4,85 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
-test('renders content', () => {
-  const blog = {
-    likes: 123,
-    author: 'Matti Rönkä',
-    title: 'Tuottavuutta uutisista',
-    url: 'www.yle.fi/tuottavuutta-uutisista',
-    user: '10923809usdif9sa0dfasdf9a',
-    id: 'asoi09i8d09as8d09i131212as'
-  }
+describe('<Blog />', () => {
+  let blog
+  beforeEach(() => {
+    //our test blog
+    blog = {
+      likes: 123,
+      author: 'Matti Rönkä',
+      title: 'Tuottavuutta uutisista',
+      url: 'www.yle.fi/tuottavuutta-uutisista',
+      user: {
+        name: 'Test User',
+        username: 'testuser'
+      },
+      id: 'asoi09i8d09as8d09i131212as'
+    }
+  })
 
-  // render(<Blog blog={blog}/>)
-  const { container } = render(<Blog blog={blog} />)
+  test('renders content', () => {
+    //Render our blog
 
-  const div = container.querySelector('.blog')
+    const { container } = render(<Blog blog={blog} />)
 
-  //Expect title and author to be rendered
-  expect(div).toHaveTextContent(
-    'Tuottavuutta uutisista'
-  )
-  expect(div).toHaveTextContent(
-    'Matti Rönkä'
-  )
+    const div = container.querySelector('.blog')
 
-  //expect url and likes NOT to be rendered
-  expect(div).not.toHaveTextContent(
-    'www.yle.fi/tuottavuutta-uutisista'
-  )
-  expect(div).not.toHaveTextContent(
-    123
-  )
-})
-test('clicking the "view" button calls event handler once', async () => {
-  const blog = {
-    likes: 123,
-    author: 'Matti Rönkä',
-    title: 'Tuottavuutta uutisista',
-    url: 'www.yle.fi/tuottavuutta-uutisista',
-    user: {
-      name: 'Test User',
-      username: 'testuser'
-    },
-    id: 'asoi09i8d09as8d09i131212as'
-  }
+    //Expect title and author to be rendered
+    expect(div).toHaveTextContent(
+      'Tuottavuutta uutisista'
+    )
+    expect(div).toHaveTextContent(
+      'Matti Rönkä'
+    )
+
+    //expect url and likes NOT to be rendered
+    expect(div).not.toHaveTextContent(
+      'www.yle.fi/tuottavuutta-uutisista'
+    )
+    expect(div).not.toHaveTextContent(
+      123
+    )
+  })
+  test('clicking the view button renders more elements', async () => {
+    //Render our blog
+    const { container } = render(<Blog blog={blog} />)
+
+    //virtually click "view" button
+    const user = userEvent.setup()
+    const button = screen.getByText('view')
+    await user.click(button)
+    const div = container.querySelector('.toggleMoreInfo')
+    expect(div).not.toHaveStyle('display: none')
+
+    //expect url, likes and user to be rendered, when view is clicked
+    expect(div).toHaveTextContent(
+      'www.yle.fi/tuottavuutta-uutisista'
+    )
+    expect(div).toHaveTextContent(
+      '123'
+    )
+    expect(div).toHaveTextContent(
+      'Test User'
+    )
+
+  })
+  test('clicking "like" button twice calls event handler twice', async () => {
+    const mockHandler = jest.fn()
+    const { container } = render(<Blog blog={blog} addLike={mockHandler} />)
+
+    const user = userEvent.setup()
+
+    //Open more info to access like button
+    const viewButton = screen.getByText('view')
+    await user.click(viewButton)
+
+    //Click like button twice
+    const likeButton = screen.getByText('like')
+    await user.click(likeButton)
+    await user.click(likeButton)
+    expect(mockHandler.mock.calls).toHaveLength(2)
 
 
-  //Render our blog
-  const { container } = render(<Blog blog={blog} />)
-
-  //virtually click "view" button
-  const user = userEvent.setup()
-  const button = screen.getByText('view')
-  await user.click(button)
-  const div = container.querySelector('.toggleMoreInfo')
-  expect(div).not.toHaveStyle('display: none')
-
-  //expect url, likes and user to be rendered, when view is clicked
-  expect(div).toHaveTextContent(
-    'www.yle.fi/tuottavuutta-uutisista'
-  )
-  expect(div).toHaveTextContent(
-    '123'
-  )
-  expect(div).toHaveTextContent(
-    'Test User'
-  )
-
-  //show us what we got
-  screen.debug()
-
+  })
 })
