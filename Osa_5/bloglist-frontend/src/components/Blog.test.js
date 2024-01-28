@@ -96,27 +96,21 @@ describe('<BlogForm />', () => {
     const createBlog = jest.fn()
 
     const { container } = render(<BlogForm createBlog={createBlog} />)
-    //find textbox
-    //const input = screen.getByRole('textbox')
-    // const title = container.querySelector('.titleTextbox')
-    // const author = container.querySelector('.authorTextbox')
-    // const url = container.querySelector('.urlTextbox')
-    const inputs = screen.getAllByRole('textbox')
 
+    //find inputs
+    const title = container.querySelector('#blog-input-title')
+    const author = container.querySelector('#blog-input-author')
+    const url = container.querySelector('#blog-input-url')
 
     //find create button
     const sendButton = screen.getByText('create')
 
     //insert title, author and url
-    // await user.type(title, 'Test Title')
-    // await user.type(author, 'Test Author')
-    // await user.type(url, 'Test Url')
-    await user.type(inputs[0], 'Test data')
-    await user.type(inputs[1], 'Test data')
-    await user.type(inputs[2], 'Test data')
+    await user.type(title, 'Test data')
+    await user.type(author, 'Test data')
+    await user.type(url, 'Test data')
 
-
-
+    //Send data
     await user.click(sendButton)
 
     //Make sure createBlog is called

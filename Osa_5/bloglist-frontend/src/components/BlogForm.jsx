@@ -30,6 +30,7 @@ const CreateNewBlog = ({ createBlog }) => {
             value={newTitle}
             name='Title'
             onChange={event => setNewTitle(event.target.value)}
+            id='blog-input-title'
           />
         </div>
         <div>
@@ -39,6 +40,7 @@ const CreateNewBlog = ({ createBlog }) => {
             value={newAuthor}
             name='Author'
             onChange={event => setNewAuthor(event.target.value)}
+            id='blog-input-author'
           />
         </div>
         <div>
@@ -48,6 +50,7 @@ const CreateNewBlog = ({ createBlog }) => {
             value={newUrl}
             name='Url'
             onChange={event => setNewUrl(event.target.value)}
+            id='blog-input-url'
           />
         </div>
         <button type='submit'>create</button>
