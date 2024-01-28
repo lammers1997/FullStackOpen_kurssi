@@ -171,14 +171,13 @@ const App = () => {
             {blogs
               .sort((a, b) => b.likes - a.likes)
               .map(blog =>
-                <li key={blog.id}>
-                  <Blog
-                    blog={blog}
-                    deleteBlog={handleDeleteBlog}
-                    user={user}
-                    addLike={addLike}
-                  />
-                </li>
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  deleteBlog={handleDeleteBlog}
+                  user={user}
+                  addLike={addLike}
+                />
               )}
           </ul>
         </div>
