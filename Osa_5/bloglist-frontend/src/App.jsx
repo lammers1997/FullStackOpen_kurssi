@@ -56,8 +56,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (exception) {
-      handleNotification('Invalid username or password!', 'error')
+    } catch (error) {
+      handleNotification('Invalid username or password', 'error')
     }
   }
 
