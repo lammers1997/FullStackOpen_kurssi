@@ -33,7 +33,7 @@ const Blog = ({ blog, deleteBlog, addLike, user }) => {
       <div style={blogStyle}>
         <div>
           <p>{blog.title} {blog.author}</p>
-          <button onClick={toggleViewInfo}>
+          <button id='viewInfoButton' onClick={toggleViewInfo}>
             {viewInfo ? 'hide' : 'view'}
           </button>
         </div>
@@ -42,10 +42,10 @@ const Blog = ({ blog, deleteBlog, addLike, user }) => {
             <p>{blog.url}</p>
             <p>
               likes {blog.likes}
-              <button onClick={() => addLike(blog)}>like</button>
+              <button id='likeButton' onClick={() => addLike(blog)}>like</button>
             </p>
             <p>{blog.user.name}</p>
-            <button onClick={() => deleteBlog(blog)} style={{ display: showRemoveButton ? 'inline-block' : 'none' }}>
+            <button id='removeButton' onClick={() => deleteBlog(blog)} style={{ display: showRemoveButton ? 'inline-block' : 'none' }}>
               remove
             </button>
           </div>
