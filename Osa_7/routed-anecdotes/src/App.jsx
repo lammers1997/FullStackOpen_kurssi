@@ -82,6 +82,7 @@ const CreateNew = (props) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    // eslint-disable-next-line react/prop-types
     props.addNew({
       content: content.value,
       author: author.value,
