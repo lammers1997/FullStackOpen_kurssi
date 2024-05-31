@@ -179,7 +179,7 @@ describe('Blog app', function () {
       })
       it('Blogs are ordered by likes', function () {
 
-        //view two blogs
+        //view two existing blogs
         cy.contains('view').click()
         cy.contains('view').click()
 
@@ -196,8 +196,6 @@ describe('Blog app', function () {
         //Order is reversed
         cy.get('.blog').eq(1).should('contain', 'Teron ja Esan kommelluksia')
         cy.get('.blog').eq(0).should('contain', 'Kummelin kulta-aika')
-
-
 
       })
     })

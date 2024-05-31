@@ -53,9 +53,9 @@ blogsRouter.delete('/:id', userExtractor, async (request, response) => {
 
 //Modify likes of a blog. Authorization not included
 blogsRouter.put('/:id', async (request, response) => {
-  const { likes } = request.body
+  const { title, url, author, likes  } = request.body
 
-  const modifiedBlog = await Blog.findByIdAndUpdate(request.params.id, { likes }, { new: true })
+  const modifiedBlog = await Blog.findByIdAndUpdate(request.params.id, { title, url, author, likes  }, { new: true })
   response.json(modifiedBlog)
 })
 

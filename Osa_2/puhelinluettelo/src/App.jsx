@@ -42,9 +42,7 @@ const App = () => {
         }, 6000)
       })
       .catch(error => {
-        setErrorMessage(
-          `${person.name} was already deleted from database. Please try again`
-        )
+        setErrorMessage(error.response.data.error)
         setTimeout(() => {
           setErrorMessage(null)
         }, 6000)
@@ -63,8 +61,7 @@ const App = () => {
     } else { //client wants to delete person
       personService
         .deletePerson(id)
-        .then(status => {
-          console.log(`Status: ${status}`)
+        .then(() => {
           setPersons(persons.filter(person => person.id !== id))
           setNotificationMessage(
             `${person.name} deleted successfully.`
@@ -73,7 +70,7 @@ const App = () => {
             setNotificationMessage(null)
           }, 6000)
         })
-        .catch(error => {
+        .catch(() => {
           setErrorMessage(
             `Information of ${person.name} has already been removed from server`
           )
@@ -116,14 +113,21 @@ const App = () => {
           setPersons(persons.concat(returnedPerson))
           setNewName('')
           setNewNumber('')
+          setNotificationMessage(
+            `Added ${newName}`
+          )
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 6000)
         })
-      setNotificationMessage(
-        `Added ${newName}`
-      )
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 6000)
-      return
+        .catch(error => {
+          setErrorMessage(error.response.data.error)
+          
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 6000)
+        })     
+      
     }
   }
 
