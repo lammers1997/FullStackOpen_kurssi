@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import blogService from '../services/blogs'
+import { setNotification } from './notificationReducer'
 
 const blogSlice = createSlice({
   name: 'blogs',
@@ -25,10 +26,13 @@ const blogSlice = createSlice({
 
       return state.map((blog) => (blog.id !== id ? blog : changedBlog))
     },
+    deleteBlog(state, action) {
+      return state.filter((blog) => blog.id !== action.payload)
+    },
   },
 })
 
-export const { voteBlog, appendBlog, setBlogs } = blogSlice.actions
+export const { voteBlog, appendBlog, setBlogs, deleteBlog } = blogSlice.actions
 
 export const initializeBlogs = () => {
   return async (dispatch) => {
@@ -39,16 +43,53 @@ export const initializeBlogs = () => {
 
 export const createBlog = (content) => {
   return async (dispatch) => {
-    const newBlog = await blogService.create(content)
-    dispatch(appendBlog(newBlog))
+    try {
+      const newBlog = await blogService.create(content)
+      dispatch(appendBlog(newBlog))
+      dispatch(
+        setNotification(
+          `a new blog "${newBlog.title}" by ${newBlog.author} created!`,
+          'notification',
+          5
+        )
+      )
+
+      console.log(newBlog)
+    } catch (error) {
+      dispatch(setNotification('Error adding blog', 'error', 5))
+    }
   }
 }
 
 export const setVoteBlog = (blog) => {
   return async (dispatch) => {
-    const blogToLike = { ...blog, likes: blog.likes + 1 }
-    const newBlog = await blogService.addLike(blog.id, blogToLike)
-    dispatch(voteBlog(blog))
+    try {
+      const blogToLike = { ...blog, likes: blog.likes + 1 }
+      const newBlog = await blogService.addLike(blog.id, blogToLike)
+
+      dispatch(voteBlog(blog))
+      dispatch(setNotification(`you liked ${blog.title}`, 'notification', 5))
+    } catch (error) {
+      dispatch(setNotification(error.response.data.error, 'error', 5))
+    }
+  }
+}
+
+export const setDeleteBlog = (blog) => {
+  return async (dispatch) => {
+    try {
+      const response = await blogService.deleteBlog(blog.id)
+      dispatch(deleteBlog(blog.id))
+      dispatch(
+        setNotification(
+          ` Blog "${blog.title}" by ${blog.author} deleted`,
+          'notification',
+          5
+        )
+      )
+    } catch (error) {
+      dispatch(setNotification(error.response.data.error, 'error', 5))
+    }
   }
 }
 

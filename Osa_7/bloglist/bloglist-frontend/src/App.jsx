@@ -13,7 +13,10 @@ import {
   initializeBlogs,
   createBlog,
   setVoteBlog,
+  setDeleteBlog,
 } from './reducers/blogReducer'
+
+import { loginUser, logoutUser } from './reducers/userReducer'
 
 const App = () => {
   const dispatch = useDispatch()
@@ -21,13 +24,17 @@ const App = () => {
   const blogs = useSelector((state) => {
     return [...state.blogs].sort((a, b) => b.likes - a.likes)
   })
+  const user = useSelector((state) => {
+    return state.user.user
+  })
 
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  // const [user, setUser] = useState(null)
   const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
+    console.log('INIT')
     dispatch(initializeBlogs())
   }, [])
 
@@ -35,69 +42,36 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
       blogService.setToken(user.token)
     }
   }, [])
 
-  const handleNotification = (message, type = 'notification') => {
-    dispatch(setNotification(message, type, 5)) // message, type, time
-  }
-
   const handleLogin = async (event) => {
     event.preventDefault()
-    try {
-      const user = await loginService.login({
-        username,
-        password,
-      })
-      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (error) {
-      handleNotification('Invalid username or password', 'error')
-    }
+    dispatch(loginUser(username, password))
+    setUsername('')
+    setPassword('')
   }
 
   const handleLogout = async () => {
-    window.localStorage.removeItem('loggedBlogappUser')
-    setUser(null)
-    blogService.setToken(null)
+    dispatch(logoutUser())
   }
 
   const addBlog = async (blogObject) => {
-    try {
-      dispatch(createBlog(blogObject))
-      handleNotification(
-        `a new blog "${blogObject.title}" by ${blogObject.author} created!`
-      )
-      console.log(blogs)
-    } catch (error) {
-      console.log('ERROR!')
-      handleNotification('Error adding blog', 'error')
-    }
+    dispatch(createBlog(blogObject))
   }
 
   const handleDeleteBlog = async (blog) => {
     const ok = window.confirm(`remove blog "${blog.title}" by ${blog.author}`)
     if (ok) {
-      const response = await blogService.deleteBlog(blog.id)
-      setBlogs((prevBlogs) => prevBlogs.filter((b) => b.id !== blog.id))
-      handleNotification(` Blog "${blog.title}" by ${blog.author} deleted`)
+      dispatch(setDeleteBlog(blog))
     } else {
-      console.log('delete cancelled')
+      dispatch(setNotification('Delete cancelled', 'notification', 5))
     }
   }
 
   const addLike = async (blog) => {
-    try {
-      dispatch(setVoteBlog(blog))
-      handleNotification(`you liked ${blog.title}`)
-    } catch (error) {
-      handleNotification(error.response.data.error, 'error')
-    }
+    dispatch(setVoteBlog(blog))
   }
 
   const loginForm = () => {
