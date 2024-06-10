@@ -73,13 +73,6 @@ const App = () => {
     ? blogs.find((blog) => blog.id === matchBlog.params.id)
     : null
 
-  // const handleLogin = async (event) => {
-  //   event.preventDefault()
-  //   dispatch(loginUser(username, password))
-  //   setUsername('')
-  //   setPassword('')
-  // }
-
   const handleLogout = async () => {
     dispatch(logoutUser())
   }
@@ -100,29 +93,6 @@ const App = () => {
   const addLike = async (blog) => {
     dispatch(setVoteBlog(blog))
   }
-
-  // const loginForm = () => {
-  //   const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-  //   const showWhenVisible = { display: loginVisible ? '' : 'none' }
-  //   return (
-  //     <div>
-  //       <div style={hideWhenVisible}>
-  //         <button onClick={() => setLoginVisible(true)}> log in</button>
-  //       </div>
-  //       <div style={showWhenVisible}>
-  //         <h2>Log in to application</h2>
-  //         <LoginForm
-  //           username={username}
-  //           password={password}
-  //           setUsername={setUsername}
-  //           setPassword={setPassword}
-  //           handleLogin={handleLogin}
-  //         />
-  //         <button onClick={() => setLoginVisible(false)}> cancel </button>
-  //       </div>
-  //     </div>
-  //   )
-  // }
 
   const blogForm = () => (
     <Togglable buttonLabel="new blog">
@@ -162,7 +132,7 @@ const App = () => {
             />
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login user={user} />} />
       </Routes>
     </div>
   )

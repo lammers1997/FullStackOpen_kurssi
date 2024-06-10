@@ -2,8 +2,8 @@ import LoginForm from '../components/Login'
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { loginUser } from '../reducers/userReducer'
-
-const Login = () => {
+//ToDo: Hide Login form, when user is logged IN!
+const Login = (user) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loginVisible, setLoginVisible] = useState(false)
@@ -11,7 +11,9 @@ const Login = () => {
   const hideWhenVisible = { display: loginVisible ? 'none' : '' }
   const showWhenVisible = { display: loginVisible ? '' : 'none' }
   const dispatch = useDispatch()
-
+  if (window.localStorage.getItem('loggedBlogappUser')) {
+    return null
+  }
   const handleLogin = async (event) => {
     event.preventDefault()
     dispatch(loginUser(username, password))
