@@ -35,9 +35,11 @@ import {
 
 import { loginUser, logoutUser } from './reducers/userReducer'
 import { initializeUsers } from './reducers/userDataReducer'
+import { Container } from 'react-bootstrap'
 
 const App = () => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const blogs = useSelector((state) => {
     return [...state.blogs].sort((a, b) => b.likes - a.likes)
@@ -75,6 +77,7 @@ const App = () => {
 
   const handleLogout = async () => {
     dispatch(logoutUser())
+    navigate('/login')
   }
 
   const addBlog = async (blogObject) => {
@@ -88,6 +91,7 @@ const App = () => {
     } else {
       dispatch(setNotification('Delete cancelled', 'notification', 5))
     }
+    navigate('/')
   }
 
   const addLike = async (blog) => {
@@ -101,23 +105,14 @@ const App = () => {
   )
 
   return (
-    <div>
+    <Container fluid>
       <NavMenu user={user} handleLogout={handleLogout} />
-      <h2>blogs</h2>
       <Notification />
 
       <Routes>
         <Route
           path="/"
-          element={
-            <Blogs
-              user={user}
-              blogs={blogs}
-              handleDeleteBlog={handleDeleteBlog}
-              addLike={addLike}
-              blogForm={blogForm}
-            />
-          }
+          element={<Blogs user={user} blogs={blogs} blogForm={blogForm} />}
         />
         <Route path="/users" element={<Users users={users} />} />
         <Route path="/users/:id" element={<User user={userToInspect} />} />
@@ -126,7 +121,7 @@ const App = () => {
           element={
             <Blog
               blog={blogToInspect}
-              deleteBlog={deleteBlog}
+              deleteBlog={handleDeleteBlog}
               addLike={addLike}
               user={user}
             />
@@ -134,7 +129,7 @@ const App = () => {
         />
         <Route path="/login" element={<Login user={user} />} />
       </Routes>
-    </div>
+    </Container>
   )
 }
 

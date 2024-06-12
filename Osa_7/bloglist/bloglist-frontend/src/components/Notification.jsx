@@ -1,3 +1,4 @@
+import { Alert } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
 const Notification = () => {
@@ -6,9 +7,8 @@ const Notification = () => {
     return null
   }
   //currently only two types of notifications, so this good
-  const notificationClass =
-    notification.type === 'error' ? 'error' : 'notification'
+  const notificationClass = notification.type === 'error' ? 'danger' : 'success'
 
-  return <div className={notificationClass}>{notification.content}</div>
+  return <Alert variant={notificationClass}>{notification.content}</Alert>
 }
 export default Notification

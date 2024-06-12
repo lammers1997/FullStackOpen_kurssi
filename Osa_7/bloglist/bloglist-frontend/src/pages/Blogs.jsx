@@ -1,35 +1,29 @@
 import { Link } from 'react-router-dom'
 import Blog from '../components/Blog'
+import { ListGroup } from 'react-bootstrap'
 
-const Blogs = ({ user, blogs, handleDeleteBlog, addLike, blogForm }) => {
+const Blogs = ({ user, blogs, blogForm }) => {
   if (!user) {
-    return null
+    return (
+      <div>
+        <p>Please login to see blogs!</p>
+      </div>
+    )
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-  const listStyle = {
-    paddingLeft: 2,
-    borderWidth: 1,
-    marginBottom: 5,
-    listStyleType: 'none',
-  }
   return (
     <div>
       {blogForm()}
       <br />
-      <ul style={listStyle}>
+      <ListGroup numbered>
         {blogs.map((blog) => (
-          <li key={blog.id} style={blogStyle}>
-            <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-          </li>
+          <ListGroup.Item key={blog.id} variant="primary">
+            <Link to={`/blogs/${blog.id}`}>
+              {blog.title} by {blog.author}
+            </Link>
+          </ListGroup.Item>
         ))}
-      </ul>
+      </ListGroup>
     </div>
   )
 }

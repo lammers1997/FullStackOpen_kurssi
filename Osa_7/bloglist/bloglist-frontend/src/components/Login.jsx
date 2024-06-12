@@ -1,36 +1,39 @@
 import PropTypes from 'prop-types'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = ({
   username,
   password,
   setUsername,
   setPassword,
-  handleLogin
+  handleLogin,
 }) => {
   return (
-    <form onSubmit={handleLogin}>
-      <div>
-        username
-        <input
-          id='username'
-          type='text'
+    <Form onSubmit={handleLogin}>
+      <Form.Group>
+        <Form.Label>username:</Form.Label>
+        <Form.Control
+          id="username"
+          type="text"
           value={username}
-          name='Username'
+          name="Username"
           onChange={({ target }) => setUsername(target.value)}
         />
-      </div>
-      <div>
-        password
-        <input
-          id='password'
-          type='password'
+      </Form.Group>
+      <Form.Group>
+        <Form.Label>password:</Form.Label>
+        <Form.Control
+          id="password"
+          type="password"
           value={password}
-          name='Password'
+          name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
-      </div>
-      <button id='login-button' type='submit'>login</button>
-    </form>
+      </Form.Group>
+      <Button variant="primary" type="submit">
+        login
+      </Button>
+    </Form>
   )
 }
 LoginForm.propTypes = {
@@ -38,6 +41,6 @@ LoginForm.propTypes = {
   setUsername: PropTypes.func.isRequired,
   setPassword: PropTypes.func.isRequired,
   username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
+  password: PropTypes.string.isRequired,
 }
 export default LoginForm

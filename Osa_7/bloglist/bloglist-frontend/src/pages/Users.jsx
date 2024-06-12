@@ -1,11 +1,11 @@
-import { useSelector } from 'react-redux'
+import Table from 'react-bootstrap/Table'
 
 import { Link } from 'react-router-dom'
 
 const Users = ({ users }) => {
   return (
     <div>
-      <table>
+      <Table striped hover variant="secondary">
         <thead>
           <tr>
             <th></th>
@@ -22,7 +22,7 @@ const Users = ({ users }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   )
 }
