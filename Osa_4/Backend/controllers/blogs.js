@@ -58,14 +58,36 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
 
 //Modify likes of a blog. Authorization not included
 blogsRouter.put("/:id", async (request, response) => {
-  const { title, url, author, likes } = request.body;
+  const { title, url, author, likes, comments } = request.body;
 
   const modifiedBlog = await Blog.findByIdAndUpdate(
     request.params.id,
-    { title, url, author, likes },
+    { title, url, author, likes, comments },
     { new: true }
   );
   response.json(modifiedBlog);
+});
+
+// Add comment to blog (for part 7.18->)
+blogsRouter.post("/:id/comments", userExtractor, async (request, response) => {
+  const { newComment } = request.body;
+
+  const blog = await Blog.findById(request.params.id);
+
+  if (!blog) {
+    return response.status(404).json({ error: "blog not found" });
+  }
+
+  blog.comments = blog.comments.concat(newComment);
+  const savedBlog = await blog.save();
+
+  //populate, so that it returns user data to client
+  const populatedBlog = await savedBlog.populate("user", {
+    username: 1,
+    name: 1,
+  });
+
+  response.status(201).json(populatedBlog);
 });
 
 module.exports = blogsRouter;
