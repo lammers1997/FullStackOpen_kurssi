@@ -1,4 +1,4 @@
-import { isNumber, isLengthCorrect } from "./uitls";
+import { isNumber } from "./uitls";
 
 
 interface Result {
@@ -11,7 +11,7 @@ interface Result {
   average: number;
 }
 
-const calculateExercises = (
+export const calculateExercises = (
   exercises: number[],
   targetValue: number
 ): Result => {
@@ -58,21 +58,24 @@ const calculateExercises = (
   };
 };
 
-try {
-  const exercises = process.argv.slice(2);
-  //are all numbers AND is length NOT 0
-  if (exercises.length < 2) {
-    throw new Error('Add some exercises. First parameter is target value')
+if (require.main === module) {
 
-  } else if (exercises.length > 1 && isNumber(exercises)) {
-    const exerc = exercises.map(Number); // Convert all to numbers
-    console.log(calculateExercises(exerc.slice(1), exerc[0]))
-  }
+  try {
+    const exercises = process.argv.slice(2);
+    //are all numbers AND is length NOT 0
+    if (exercises.length < 2) {
+      throw new Error('Add some exercises. First parameter is target value');
 
-} catch (error: unknown) {
-  let errorMessage = "Something went wrong."
-  if (error instanceof Error) {
-    errorMessage += ' Error: ' + error.message;
+    } else if (exercises.length > 1 && isNumber(exercises)) {
+      const exerc = exercises.map(Number); // Convert all to numbers
+      console.log(calculateExercises(exerc.slice(1), exerc[0]));
+    }
+
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong.";
+    if (error instanceof Error) {
+      errorMessage += ' Error: ' + error.message;
+    }
+    console.log(errorMessage);
   }
-  console.log(errorMessage);
 }
