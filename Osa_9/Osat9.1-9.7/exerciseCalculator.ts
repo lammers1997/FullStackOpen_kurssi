@@ -1,3 +1,6 @@
+import { isNumber, isLengthCorrect } from "./uitls";
+
+
 interface Result {
   periodLength: number;
   trainingDays: number;
@@ -56,7 +59,20 @@ const calculateExercises = (
 };
 
 try {
-  console.log(calculateExercises([0], 2));
-} catch (error) {
-  console.log(error.message);
+  const exercises = process.argv.slice(2);
+  //are all numbers AND is length NOT 0
+  if (exercises.length < 2) {
+    throw new Error('Add some exercises. First parameter is target value')
+
+  } else if (exercises.length > 1 && isNumber(exercises)) {
+    const exerc = exercises.map(Number); // Convert all to numbers
+    console.log(calculateExercises(exerc.slice(1), exerc[0]))
+  }
+
+} catch (error: unknown) {
+  let errorMessage = "Something went wrong."
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
 }

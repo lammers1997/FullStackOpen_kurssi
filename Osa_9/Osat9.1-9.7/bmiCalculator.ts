@@ -1,3 +1,5 @@
+import { isNumber, isLengthCorrect } from "./uitls";
+
 const calculateBmi = (height: number, weigth: number): string => {
   const bmi: number = weigth / Math.pow(height / 100, 2);
   if (bmi < 16) {
@@ -13,4 +15,21 @@ const calculateBmi = (height: number, weigth: number): string => {
   }
 };
 
-console.log(calculateBmi(180, 70));
+try {
+  //input length must be 2 NUMBERS
+  if (isLengthCorrect(process.argv.slice(2), 2) && isNumber(process.argv.slice(2))) {
+    const a: number = Number(process.argv[2])
+    const b: number = Number(process.argv[3])
+    //if either of input values is zero, throw error
+    if (a === 0 || b === 0){
+      throw new Error('Height or weight can not be zero!')
+    }
+      console.log(calculateBmi(a, b))
+  }
+} catch (error: unknown) {
+  let errorMessage = "Something went wrong."
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
